@@ -32,9 +32,9 @@ public class LeadService {
     }
 
     private void sendToWebhook(WebhookRequest webhookRequest) {
-//        String webhookUrl = "URL_DO_WEBHOOK";
-//        RestTemplate restTemplate = new RestTemplate();
-//        restTemplate.postForObject(webhookUrl, webhookRequest, String.class);
+        String webhookUrl = "https://app.revendamais.com.br/application/index.php/api/leads/help";
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForObject(webhookUrl, webhookRequest, String.class);
         System.out.println("Lead enviado para o webhook");
         System.out.println(webhookRequest.toString());
     }
