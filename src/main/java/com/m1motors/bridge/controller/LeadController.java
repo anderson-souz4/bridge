@@ -5,13 +5,11 @@ import com.m1motors.bridge.dto.ChatbotRequest;
 import com.m1motors.bridge.service.LeadService;
 import com.m1motors.bridge.service.exceptions.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", allowedHeaders = "*")  // Permitir todas as origens
 public class LeadController {
 
     private final LeadService leadService;
