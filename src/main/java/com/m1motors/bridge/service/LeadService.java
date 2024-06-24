@@ -1,7 +1,8 @@
 package com.m1motors.bridge.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.m1motors.bridge.dto.ChatbotRequest;
-import com.m1motors.bridge.dto.WebhookRequest;
 import com.m1motors.bridge.model.Client;
 import com.m1motors.bridge.model.Lead;
 import com.m1motors.bridge.service.exceptions.CustomException;
@@ -21,15 +22,14 @@ public class LeadService {
         this.restTemplate = restTemplate;
     }
 
-    public void processLead(ChatbotRequest chatbotRequest) throws CustomException {
+    public void processLead(ChatbotRequest chatbotRequest) throws CustomException, JsonProcessingException {
         log.info("Processando lead do chatbot");
         log.info(chatbotRequest.toString());
 
         Client client = createClient(chatbotRequest);
         Lead lead = createLead(chatbotRequest, client);
-        WebhookRequest webhookRequest = createWebhookRequest(lead);
 
-        sendToWebhook(webhookRequest);
+        sendToWebhook(lead);
     }
 
     private Client createClient(ChatbotRequest chatbotRequest) {
@@ -50,21 +50,18 @@ public class LeadService {
         return lead;
     }
 
-    private WebhookRequest createWebhookRequest(Lead lead) {
-        WebhookRequest webhookRequest = new WebhookRequest();
-        webhookRequest.setLead(lead);
-        return webhookRequest;
+    private void sendToWebhook(Lead lead) throws CustomException {
+        String webhookUrl = "https://app.revendamais.com.br/application/index.php/api/leads/help";
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String json = objectMapper.writeValueAsString(lead);
+            // Imprimir JSON
+            System.out.println(json);
+            restTemplate.postForObject(webhookUrl, json, String.class);
+            log.info("Lead enviado para o webhook");
+        } catch (Exception e) {
+            log.error("Erro ao enviar o LEAD para o Webhook", e);
+            throw new CustomException("Erro ao enviar o LEAD para o Webhook: " + e.getMessage());
+        }
     }
-
-private void sendToWebhook(WebhookRequest webhookRequest) throws CustomException {
-    String webhookUrl = "https://app.revendamais.com.br/application/index.php/api/leads/help";
-    try {
-        restTemplate.postForObject(webhookUrl, webhookRequest, String.class);
-        log.info("Lead enviado para o webhook");
-        log.info(webhookRequest.toString());
-    } catch (Exception e) {
-        log.error("Erro ao enviar o LEAD para o Webhook", e);
-        throw new CustomException("Erro ao enviar o LEAD para o Webhook: " + e.getMessage());
-    }
-}
 }

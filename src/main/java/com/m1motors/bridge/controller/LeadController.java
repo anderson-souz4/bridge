@@ -1,5 +1,6 @@
 package com.m1motors.bridge.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.m1motors.bridge.dto.ChatbotRequest;
 import com.m1motors.bridge.service.LeadService;
 import com.m1motors.bridge.service.exceptions.CustomException;
@@ -21,7 +22,7 @@ public class LeadController {
     }
 
     @PostMapping("/process-lead")
-    public void processLead(@RequestBody ChatbotRequest chatbotRequest) throws CustomException {
+    public void processLead(@RequestBody ChatbotRequest chatbotRequest) throws CustomException, JsonProcessingException {
         leadService.processLead(chatbotRequest);
     }
 }
