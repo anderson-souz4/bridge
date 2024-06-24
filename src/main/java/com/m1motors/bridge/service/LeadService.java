@@ -4,6 +4,7 @@ import com.m1motors.bridge.dto.ChatbotRequest;
 import com.m1motors.bridge.dto.WebhookRequest;
 import com.m1motors.bridge.model.Client;
 import com.m1motors.bridge.model.Lead;
+import com.m1motors.bridge.service.exceptions.CustomException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class LeadService {
         this.restTemplate = restTemplate;
     }
 
-    public void processLead(ChatbotRequest chatbotRequest) {
+    public void processLead(ChatbotRequest chatbotRequest) throws CustomException {
         log.info("Processando lead do chatbot");
         log.info(chatbotRequest.toString());
 
@@ -55,10 +56,15 @@ public class LeadService {
         return webhookRequest;
     }
 
-    private void sendToWebhook(WebhookRequest webhookRequest) {
-        String webhookUrl = "https://app.revendamais.com.br/application/index.php/api/leads/help";
+private void sendToWebhook(WebhookRequest webhookRequest) throws CustomException {
+    String webhookUrl = "https://app.revendamais.com.br/application/index.php/api/leads/help";
+    try {
         restTemplate.postForObject(webhookUrl, webhookRequest, String.class);
         log.info("Lead enviado para o webhook");
         log.info(webhookRequest.toString());
+    } catch (Exception e) {
+        log.error("Erro ao enviar o LEAD para o Webhook", e);
+        throw new CustomException("Erro ao enviar o LEAD para o Webhook: " + e.getMessage());
     }
+}
 }
