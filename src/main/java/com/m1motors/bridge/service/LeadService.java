@@ -47,6 +47,7 @@ public class LeadService {
         lead.setTitle("LEAD do Chatbot");
         lead.setChannel("Chatbot");
         lead.setLeadType("Chatbot");
+        lead.setInteration(chatbotRequest.getText());
         return lead;
     }
 
